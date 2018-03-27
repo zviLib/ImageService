@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ImageService.Modal
 {
-    interface ILoggingModal
+   public interface ILoggingModal
     {
         event EventHandler<MessageRecievedEventArgs> MessageRecieved;
         void Log(string message, MessageTypeEnum type);           // Logging the Message

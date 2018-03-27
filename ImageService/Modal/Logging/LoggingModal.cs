@@ -6,12 +6,27 @@ using System.Threading.Tasks;
 
 namespace ImageService.Modal
 {
-    class LoggingModal
+    public class LoggingModal : ILoggingModal
     {
-        public event EventHandler<MessageRecievedEventArgs> MessageRecieved;
-        public void Log(string message, MessageTypeEnum type)
+
+
+        public LoggingModal()
         {
 
+        }
+
+        public event EventHandler<MessageRecievedEventArgs> MessageRecieved;
+
+        public void Log(string message, MessageTypeEnum type)
+        {
+            //create argument
+            MessageRecievedEventArgs m = new MessageRecievedEventArgs
+            {
+                Status = type,
+                Message = message
+            };
+            //invoke event
+            MessageRecieved.Invoke(this, m);
         }
     }
 }

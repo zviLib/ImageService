@@ -45,8 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\CreateFolder.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\NewFileCommand.cs" />
+    <Compile Include="Controller\Handlers\CommandRecievedEventArgs.cs" />
+    <Compile Include="Controller\Handlers\DirectoryCloseEventArgs.cs" />
     <Compile Include="Controller\Handlers\DirectoyHandler.cs" />
     <Compile Include="Controller\Handlers\IDirectoryHandler.cs" />
     <Compile Include="Controller\IImageController.cs" />
@@ -57,8 +60,8 @@
     <Compile Include="ImageService.Designer.cs">
       <DependentUpon>ImageService.cs</DependentUpon>
     </Compile>
-    <Compile Include="Modal\Image\IImageServiceModal.cs" />
-    <Compile Include="Modal\Image\ImageServiceModal.cs" />
+    <Compile Include="Modal\Image\IImageModal.cs" />
+    <Compile Include="Modal\Image\ImageModal.cs" />
     <Compile Include="Modal\Logging\ILoggingModal.cs" />
     <Compile Include="Modal\Logging\LoggingModal.cs" />
     <Compile Include="Modal\Logging\MessageRecievedEventArgs.cs" />

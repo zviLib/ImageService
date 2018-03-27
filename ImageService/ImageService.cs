@@ -8,6 +8,8 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using ImageService.Modal;
+using ImageService.Server;
 
 namespace ImageService
 {
@@ -15,10 +17,13 @@ namespace ImageService
     {
         private EventLog eventLog;
         private int eventId = 1;
+        private ILoggingModal logger;
+        private ImageServer server;
 
         public ImageService()
         {
             InitializeComponent();
+            //initialize event log
             eventLog = new EventLog();
             if (!EventLog.SourceExists("MySource"))
             {
@@ -41,10 +46,21 @@ namespace ImageService
             timer.Interval = 60000; // 60 seconds  
             timer.Elapsed += new System.Timers.ElapsedEventHandler(this.Monitor);
             timer.Start();
+            //create logger
+            logger = new LoggingModal();
+            logger.MessageRecieved += onMsg;
+            //create server
+            server = new ImageServer(logger);
+
             // Update the service state to Running.  
             serviceStatus.dwCurrentState = ServiceState.SERVICE_RUNNING;
             SetServiceStatus(this.ServiceHandle, ref serviceStatus);
             eventLog.WriteEntry("Service started.");
+        }
+
+        private void Logger_MessageRecieved(object sender, MessageRecievedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         protected override void OnStop()
@@ -56,7 +72,13 @@ namespace ImageService
         public void Monitor(object sender, System.Timers.ElapsedEventArgs args)
         {
             // TODO: Insert monitoring activities here.  
-            eventLog1.WriteEntry("Monitoring the System", EventLogEntryType.Information, eventId++);
+            eventLog.WriteEntry("Monitoring the System", EventLogEntryType.Information, eventId++);
+
+        }
+
+        public void onMsg(object sender, MessageRecievedEventArgs message)
+        {
+            eventLog.WriteEntry(message.Message);
         }
 
         [DllImport("advapi32.dll", SetLastError = true)]

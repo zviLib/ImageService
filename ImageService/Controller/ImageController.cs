@@ -1,4 +1,5 @@
-﻿using ImageService.Modal;
+﻿using ImageService.Commands;
+using ImageService.Modal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,20 +10,23 @@ namespace ImageService.Controller
 {
     public class ImageController : IImageController
     {
-        private IImageServiceModal m_modal;                      // The Modal Object
+        private IImageModal m_modal;                      // The Modal Object
         private Dictionary<int, ICommand> commands;
 
-        public ImageController(IImageServiceModal modal)
+        public ImageController(IImageModal modal)
         {
             m_modal = modal;                    // Storing the Modal Of The System
-            commands = new Dictionary<int, ICommand>()
+            NewFileCommand newFile = new NewFileCommand(modal);
+            CreateFolder create = new CreateFolder(modal);
+            commands = new Dictionary<int, ICommand>
             {
-                // For Now will contain NEW_FILE_COMMAND
+                { 0, newFile },
+                { 1, create}
             };
         }
         public string ExecuteCommand(int commandID, string[] args, out bool resultSuccesful)
         {
-            // Write Code Here
+            return commands[commandID].Execute(args, out resultSuccesful);
         }
     }
 }
