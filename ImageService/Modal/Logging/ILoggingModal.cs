@@ -9,6 +9,6 @@ namespace ImageService.Modal
    public interface ILoggingModal
     {
         event EventHandler<MessageRecievedEventArgs> MessageRecieved;
-        void Log(string message, MessageTypeEnum type);           // Logging the Message
+        void Log(MessageRecievedEventArgs msg);           // Logging the Message
     }
 }

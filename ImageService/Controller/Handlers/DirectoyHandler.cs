@@ -27,19 +27,41 @@ namespace ImageService.Controller.Handlers
 
         public void OnCommandRecieved(object sender, CommandRecievedEventArgs e)
         {
-            bool result;
-            string newPath = m_controller.ExecuteCommand(e.Type, e.Args, out result);
-            if (result)
-                m_logging.Log(newPath, MessageTypeEnum.INFO);
-            else
-                m_logging.Log("Command Failed", MessageTypeEnum.FAIL);
+            //checks if picture is in handled directory
+            if (!e.Args.Contains(m_path))
+                return;
+
+            //handles
+            // 0 = close handler
+            if (e.Type == 0)
+            {
+                //remove from server
+                DirectoryClose.Invoke(this, new DirectoryCloseEventArgs
+                {
+                    Path = m_path
+                });
+                //close watcher
+                m_dirWatcher.Dispose();
+                //log 
+                m_logging.Log(new MessageRecievedEventArgs
+                {
+                    Message = "Stopped watching:" + m_path
+                });
+            }
         }
+
+    
 
         public bool StartHandleDirectory(string dirPath)
         {
             m_path = dirPath;
             try { 
             m_dirWatcher = new FileSystemWatcher(dirPath);
+            m_dirWatcher.Created += FileCreated;
+                m_logging.Log(new MessageRecievedEventArgs
+                {
+                    Message = "Started watching directory:" + dirPath,
+                });
                 return true;
             } catch(Exception e)
             {
@@ -47,7 +69,28 @@ namespace ImageService.Controller.Handlers
             }
         }
 
-        // Implement Here!
+        private void FileCreated(object sender, FileSystemEventArgs args)
+        {
+            bool b;
+            string[] arg = { args.Name };
+            string res = m_controller.ExecuteCommand(0, arg, out b);
+            //log result
+            m_logging.Log(new MessageRecievedEventArgs
+            {
+                Message = res
+            });
+
+        public void CloseHandler()
+        {
+            //closes watcher
+            m_dirWatcher.Dispose();
+
+            //invoke close directory event
+            DirectoryClose.Invoke(this, new DirectoryCloseEventArgs
+            {
+                Path = m_path
+            });
+        }
 
     }
 }

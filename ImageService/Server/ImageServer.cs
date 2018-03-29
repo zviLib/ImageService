@@ -19,29 +19,39 @@ namespace ImageService.Server
         public event EventHandler<CommandRecievedEventArgs> CommandRecieved;          // The event that notifies about a new Command being recieved
         #endregion
 
-        public ImageServer(ILoggingModal logModal)
+        public ImageServer(ILoggingModal logModal,string outputFolder,int thumbnailSize)
         {
             m_logging = logModal;
-            m_controller = new ImageModal();
+            m_controller = new ImageModal(outputFolder, thumbnailSize);
         }
 
-        public bool watchDirectory(string path)
+        public bool WatchDirectory(string path)
         {
-            DirectoryHandler dh = new DirectoryHandler(m_controller,m_logging);
-            try { 
+            DirectoryHandler dh = new DirectoryHandler(m_controller, m_logging);
+            try
+            {
                 dh.StartHandleDirectory(path);
                 CommandRecieved += dh.OnCommandRecieved;
-                dh.DirectoryClose += closeServer;
+                dh.DirectoryClose += CloseServer;
                 return true;
-            } catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return false;
             }
         }
 
-        public void closeServer(object sender, DirectoryCloseEventArgs args)
+        public void CloseServer(object sender, DirectoryCloseEventArgs args)
         {
-
+            DirectoryHandler dh = (DirectoryHandler)sender;
+            CommandRecieved -= dh.OnCommandRecieved;
+            dh.DirectoryClose -= CloseServer;
         }
+
+        public void SendCommand(CommandRecievedEventArgs arg)
+        {
+            CommandRecieved.Invoke(this, arg);
+        }
+
     }
 }

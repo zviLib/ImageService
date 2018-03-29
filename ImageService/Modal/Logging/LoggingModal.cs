@@ -17,16 +17,9 @@ namespace ImageService.Modal
 
         public event EventHandler<MessageRecievedEventArgs> MessageRecieved;
 
-        public void Log(string message, MessageTypeEnum type)
+        public void Log(MessageRecievedEventArgs msg)
         {
-            //create argument
-            MessageRecievedEventArgs m = new MessageRecievedEventArgs
-            {
-                Status = type,
-                Message = message
-            };
-            //invoke event
-            MessageRecieved.Invoke(this, m);
+            MessageRecieved.Invoke(this, msg);
         }
     }
 }
