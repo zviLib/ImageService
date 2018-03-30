@@ -1,26 +1,23 @@
 ﻿using ImageService.Commands;
 using ImageService.Modal;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ImageService.Controller
 {
     public class ImageController : IImageController
     {
-        private Dictionary<int, ICommand> commands;
+        private Dictionary<CommandEnum, ICommand> commands; // keeps a dictonary of available commands
 
         public ImageController(IImageModal modal)
         {
             NewFileCommand newFile = new NewFileCommand(modal);
-            commands = new Dictionary<int, ICommand>
+            commands = new Dictionary<CommandEnum, ICommand>
             {
-                { 0, newFile }
+                { CommandEnum.NewFileCommand, newFile }
             };
         }
-        public string ExecuteCommand(int commandID, string[] args, out bool resultSuccesful)
+
+        public string ExecuteCommand(CommandEnum commandID, string[] args, out bool resultSuccesful)
         {
           
             return commands[commandID].Execute(args, out resultSuccesful);

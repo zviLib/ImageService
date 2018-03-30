@@ -1,12 +1,11 @@
-﻿using ImageService.Modal;
+﻿using ImageService.Commands;
 using System;
 
 namespace ImageService.Controller.Handlers
 {
     public class DirectoryCloseEventArgs : EventArgs
     {
-        
-        public MessageTypeEnum Status { get; set; }
+        public CommandEnum Type { get; set; }
         public string Path { get; set; }
     }
 }

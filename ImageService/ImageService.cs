@@ -1,84 +1,101 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Linq;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using ImageService.Modal;
 using ImageService.Server;
+using System.Configuration;
+using ImageService.Modal.Logging;
+using ImageService.Commands;
 
 namespace ImageService
 {
     public partial class ImageService : ServiceBase
     {
-        private EventLog eventLog;
-        private int eventId = 1;
-        private ILoggingModal logger;
-        private ImageServer server;
+        private EventLog eventLog;  //event log for the service
+        private int eventId = 1;    //used to track number of events since initialization
+        private ILoggingModal logger;  
+        private ImageServer server; // the server that listens to the directories
 
         public ImageService()
         {
             InitializeComponent();
             //initialize event log
             eventLog = new EventLog();
-            if (!EventLog.SourceExists("MySource"))
+            if (!EventLog.SourceExists(ConfigurationManager.AppSettings["SourceName"]))
             {
                 EventLog.CreateEventSource(
-                    "MySource", "MyNewLog");
+                    ConfigurationManager.AppSettings["SourceName"], ConfigurationManager.AppSettings["LogName"]);
             }
-            eventLog.Source = "MySource";
-            eventLog.Log = "MyNewLog";
+            eventLog.Source = ConfigurationManager.AppSettings["SourceName"];
+            eventLog.Log = ConfigurationManager.AppSettings["LogName"];
         }
+
         protected override void OnStart(string[] args)
         {
-            // Update the service state to Start Pending.  
-            eventLog.WriteEntry("Starting service...");
-            ServiceStatus serviceStatus = new ServiceStatus();
-            serviceStatus.dwCurrentState = ServiceState.SERVICE_START_PENDING;
-            serviceStatus.dwWaitHint = 100000;
-            SetServiceStatus(this.ServiceHandle, ref serviceStatus);
-            // Set up a timer to trigger every minute.  
-            System.Timers.Timer timer = new System.Timers.Timer();
-            timer.Interval = 60000; // 60 seconds  
-            timer.Elapsed += new System.Timers.ElapsedEventHandler(this.Monitor);
-            timer.Start();
             //create logger
             logger = new LoggingModal();
-            logger.MessageRecieved += onMsg;
+            logger.MessageRecieved += OnMsg;
+
+            // Update the service state to Start Pending.
+            logger.Log(new MessageRecievedEventArgs
+            {
+                Status = MessageTypeEnum.INFO,
+                Message = "Starting service..."
+            });
+            ServiceStatus serviceStatus = new ServiceStatus
+            {
+                dwCurrentState = ServiceState.SERVICE_START_PENDING,
+                dwWaitHint = 100000
+            };
+            SetServiceStatus(this.ServiceHandle, ref serviceStatus);
+
             //create server
-            server = new ImageServer(logger);
+            int size = int.Parse(ConfigurationManager.AppSettings["ThumbnailSize"]);
+            server = new ImageServer(logger, ConfigurationManager.AppSettings["OutputDir"],size);
+
+            ///start listening to folders
+            string[] paths = ConfigurationManager.AppSettings["Handler"].Split(';');
+            foreach(string s in paths)
+                server.WatchDirectory(s);
 
             // Update the service state to Running.  
             serviceStatus.dwCurrentState = ServiceState.SERVICE_RUNNING;
             SetServiceStatus(this.ServiceHandle, ref serviceStatus);
-            eventLog.WriteEntry("Service started.");
-        }
-
-        private void Logger_MessageRecieved(object sender, MessageRecievedEventArgs e)
-        {
-            throw new NotImplementedException();
+            logger.Log(new MessageRecievedEventArgs
+            {
+                Status = MessageTypeEnum.INFO,
+                Message = "Service started."
+            });
         }
 
         protected override void OnStop()
         {
-            eventLog.WriteEntry("Stopping service..");
-            eventLog.WriteEntry("Service Stopped.");
+            logger.Log(new MessageRecievedEventArgs
+            {
+                Status = MessageTypeEnum.INFO,
+                Message = "Stopping service.."
+            });
+            //close directory watchers
+            server.SendCommand(new Controller.Handlers.CommandRecievedEventArgs
+            {
+                Type = CommandEnum.CloseCommand
+            });
+            //notify about service closure
+            logger.Log(new MessageRecievedEventArgs
+            {
+                Status = MessageTypeEnum.INFO,
+                Message = "Service Stopped."
+            });
         }
-
-        public void Monitor(object sender, System.Timers.ElapsedEventArgs args)
+        /// <summary>
+        /// used to write messages to the service's event log
+        /// </summary>
+        /// <param name="sender">unused</param>
+        /// <param name="message">message to log</param>
+        public void OnMsg(object sender, MessageRecievedEventArgs message)
         {
-            // TODO: Insert monitoring activities here.  
-            eventLog.WriteEntry("Monitoring the System", EventLogEntryType.Information, eventId++);
-
-        }
-
-        public void onMsg(object sender, MessageRecievedEventArgs message)
-        {
-            eventLog.WriteEntry(message.Message);
+            eventLog.WriteEntry(message.Message,message.Status.Translate(), eventId++);
         }
 
         [DllImport("advapi32.dll", SetLastError = true)]

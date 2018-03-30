@@ -12,21 +12,28 @@ namespace ImageService.Modal
         #region Members
         private string m_OutputFolder;            // The Output Folder
         private int m_thumbnailSize;              // The Size Of The Thumbnail Size
+        private static Regex r;                   // Used for DateTime function
 
         public ImageModal(string outPutFolder, int thumbnailSize)
         {
             m_OutputFolder = outPutFolder;
             m_thumbnailSize = thumbnailSize;
+            r = new Regex(":");
         }
 
         public string AddFile(string path, out bool result)
         {
-            StringBuilder picPath = new StringBuilder(m_OutputFolder);
-            StringBuilder thumbPath = new StringBuilder(m_OutputFolder + "/thumbnail");
+            // get picture name
+            string name = path.Substring(path.LastIndexOf("\\"));
 
+            //path builders
+            StringBuilder picPath = new StringBuilder(m_OutputFolder);
+            StringBuilder thumbPath = new StringBuilder(m_OutputFolder + "\\thumbnail");
+
+            Image image = null, thumb = null;
             try
             {
-                //create output folders if not exist exists
+                //create output folders if not exists
                 if (!System.IO.Directory.Exists(picPath.ToString()))
                 {
                     DirectoryInfo di = System.IO.Directory.CreateDirectory(picPath.ToString());
@@ -40,54 +47,96 @@ namespace ImageService.Modal
                 DateTime dateTime = GetDateTakenFromImage(path);
 
                 //create year and month path
-                ///create year path
-                picPath.Append("/" + dateTime.Year);
-                thumbPath.Append("/" + dateTime.Year);
-                if (!System.IO.Directory.Exists(picPath.ToString()))
-                    System.IO.Directory.CreateDirectory(picPath.ToString());
-                if (!System.IO.Directory.Exists(thumbPath.ToString()))
-                    System.IO.Directory.CreateDirectory(thumbPath.ToString());
-                ///create month path
-                picPath.Append("/" + dateTime.Month);
-                thumbPath.Append("/" + dateTime.Month);
-                if (!System.IO.Directory.Exists(picPath.ToString()))
-                    System.IO.Directory.CreateDirectory(picPath.ToString());
-                if (!System.IO.Directory.Exists(thumbPath.ToString()))
-                    System.IO.Directory.CreateDirectory(thumbPath.ToString());
+                ///if date is available
+                if (dateTime.Year != 1 || dateTime.Month != 1)
+                {
+                    ///create year path
+                    picPath.Append("\\" + dateTime.Year);
+                    thumbPath.Append("\\" + dateTime.Year);
+                    if (!System.IO.Directory.Exists(picPath.ToString()))
+                        System.IO.Directory.CreateDirectory(picPath.ToString());
+                    if (!System.IO.Directory.Exists(thumbPath.ToString()))
+                        System.IO.Directory.CreateDirectory(thumbPath.ToString());
+                    ///create month path
+                    picPath.Append("\\" + dateTime.Month);
+                    thumbPath.Append("\\" + dateTime.Month);
+                    if (!System.IO.Directory.Exists(picPath.ToString()))
+                        System.IO.Directory.CreateDirectory(picPath.ToString());
+                    if (!System.IO.Directory.Exists(thumbPath.ToString()))
+                        System.IO.Directory.CreateDirectory(thumbPath.ToString());
+                }
+                else // if there's no taken time for the photo
+                {
+                    picPath.Append("\\Unknown Time");
+                    thumbPath.Append("\\Unknown Time");
+                    if (!System.IO.Directory.Exists(picPath.ToString()))
+                        System.IO.Directory.CreateDirectory(picPath.ToString());
+                    if (!System.IO.Directory.Exists(thumbPath.ToString()))
+                        System.IO.Directory.CreateDirectory(thumbPath.ToString());
+                }
+
+                //open image
+                image = Image.FromFile(path);
 
                 //copy image to path
-                System.IO.File.Copy(path, picPath.ToString(), true);
-                
+                image.Save(picPath.ToString() + name);
+
                 //create thumbnail
-                Image image = Image.FromFile(path);
-                Image thumb = image.GetThumbnailImage(m_thumbnailSize, m_thumbnailSize, () => false, IntPtr.Zero);
-                thumb.Save(thumbPath.ToString());
+                thumb = image.GetThumbnailImage(m_thumbnailSize, m_thumbnailSize, () => false, IntPtr.Zero);
+                thumb.Save(thumbPath.ToString() + name);
+                thumb.Dispose();
+                image.Dispose();
 
                 result = true;
-                return "Image copied successfully to: "+ picPath.ToString();
+                return String.Format("{2} copied successfully to:  {0}\nThumbnail copied successfully to: {1}", picPath.ToString(), thumbPath.ToString(),name.Substring(1));
             }
             catch (Exception e)
             {
                 result = false;
-                return "Image copying failed: " + path;
+                //release resources
+                if (thumb != null)
+                    thumb.Dispose();
+                if (image != null)
+                    image.Dispose();
+                return "Image copying failed: " + e.Message;
             }
         }
 
 
-        //we init this once so that if the function is repeatedly called
-        //it isn't stressing the garbage man
-        private static Regex r = new Regex(":");
 
-        //retrieves the datetime WITHOUT loading the whole image
+
+        /// <summary>
+        /// retrieves the datetime when the image was taken
+        /// </summary>
+        /// <param name="path">path to the image</param>
+        /// <returns>the datetime when the image was taken, 1\1\1 if information unavailable</returns>
         public static DateTime GetDateTakenFromImage(string path)
         {
-            using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
-            using (Image myImage = Image.FromStream(fs, false, false))
+            FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+            Image myImage = Image.FromStream(fs, false, false);
+
+            DateTime dateTime;
+
+            try
             {
                 PropertyItem propItem = myImage.GetPropertyItem(36867);
                 string dateTaken = r.Replace(Encoding.UTF8.GetString(propItem.Value), "-", 2);
-                return DateTime.Parse(dateTaken);
+                dateTime = DateTime.Parse(dateTaken);
             }
+            catch (ArgumentException)
+            {
+                dateTime = new DateTime(1, 1, 1);
+
+            }
+            finally
+            {
+                //release resources
+                myImage.Dispose();
+                fs.Close();
+            }
+
+            return dateTime;
+
         }
 
         #endregion
