@@ -1,6 +1,8 @@
 ﻿using ImageService.Controller.Handlers;
 using ImageService.Modal;
 using System;
+using System.Collections.Generic;
+using System.Configuration;
 
 namespace ImageService.Server
 {
@@ -9,6 +11,7 @@ namespace ImageService.Server
         #region Members
         private IImageModal m_controller;
         private ILoggingModal m_logging;
+        private LogArchive m_archive;
         #endregion
 
         #region Properties
@@ -25,6 +28,10 @@ namespace ImageService.Server
         {
             m_logging = logModal;
             m_controller = new ImageModal(outputFolder, thumbnailSize);
+
+            //create logging archive
+            m_archive = new LogArchive();
+            m_logging.MessageRecieved += m_archive.OnMsg;
         }
 
         /// <summary>
@@ -69,5 +76,55 @@ namespace ImageService.Server
             CommandRecieved.Invoke(this, arg);
         }
 
+        public List<ConfigValue> GetAppConfig()
+        {
+            List<ConfigValue> configs = new List<ConfigValue>();
+            // add output directory
+            configs.Add(new ConfigValue
+            {
+                Name = "Output Directory",
+                Value = ConfigurationManager.AppSettings["OutputDir"]
+            });
+            // add source name
+            configs.Add(new ConfigValue
+            {
+                Name = "Source Name",
+                Value = ConfigurationManager.AppSettings["SourceName"]
+            });
+            // add log name
+            configs.Add(new ConfigValue
+            {
+                Name = "Log Name",
+                Value = ConfigurationManager.AppSettings["LogName"]
+            });
+            // add thumbnail size
+            configs.Add(new ConfigValue
+            {
+                Name = "Thumbnail Size",
+                Value = ConfigurationManager.AppSettings["ThumbnailSize"]
+            });
+
+            // add watched directories
+            string[] paths = ConfigurationManager.AppSettings["Handler"].Split(';');
+            foreach (string s in paths)
+            {
+                configs.Add(new ConfigValue
+                {
+                    Name = "Handler",
+                    Value = ConfigurationManager.AppSettings["s"]
+                });
+            }
+            return configs;
+        }
+
+        public List<MessageRecievedEventArgs> GetLogs()
+        {
+            return m_archive.Logs;
+        }
+
+        public ILoggingModal GetLoggingModal()
+        {
+            return m_logging;
+        }
     }
-}
+}   

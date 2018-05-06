@@ -14,7 +14,7 @@ namespace ImageService
     {
         private EventLog eventLog;  //event log for the service
         private int eventId = 1;    //used to track number of events since initialization
-        private ILoggingModal logger;  
+        public ILoggingModal logger;
         private ImageServer server; // the server that listens to the directories
 
         public ImageService()

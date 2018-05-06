@@ -55,7 +55,7 @@
     <Compile Include="Commands\NewFileCommand.cs" />
     <Compile Include="Controller\Handlers\CommandRecievedEventArgs.cs" />
     <Compile Include="Controller\Handlers\DirectoryCloseEventArgs.cs" />
-    <Compile Include="Controller\Handlers\DirectoyHandler.cs" />
+    <Compile Include="Controller\Handlers\DirectoryHandler.cs" />
     <Compile Include="Controller\Handlers\IDirectoryHandler.cs" />
     <Compile Include="Controller\IImageController.cs" />
     <Compile Include="Controller\ImageController.cs" />
@@ -79,7 +79,9 @@
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server\ConfigValue.cs" />
     <Compile Include="Server\ImageServer.cs" />
+    <Compile Include="Server\LogArchive.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
