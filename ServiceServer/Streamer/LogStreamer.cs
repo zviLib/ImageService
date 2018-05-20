@@ -5,7 +5,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 
-namespace ServiceServer.Streamer
+namespace CommunicationServer.Streamer
 {
     class LogStreamer
     {
@@ -13,7 +13,7 @@ namespace ServiceServer.Streamer
 
         public LogStreamer(TcpClient client)
         {
-
+            m_client = client;
         }
 
         public void OnMsg(object sender, MessageRecievedEventArgs message)

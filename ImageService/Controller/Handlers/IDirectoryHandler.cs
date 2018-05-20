@@ -1,4 +1,5 @@
 ﻿using System;
+using SharedInfo.Commands;
 
 namespace ImageService.Controller.Handlers
 {

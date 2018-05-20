@@ -50,11 +50,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\CommandEnum.cs" />
+    <Compile Include="Commands\GetAppConfigCommand.cs" />
+    <Compile Include="Commands\GetLogsCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\NewFileCommand.cs" />
-    <Compile Include="Controller\Handlers\CommandRecievedEventArgs.cs" />
-    <Compile Include="Controller\Handlers\DirectoryCloseEventArgs.cs" />
     <Compile Include="Controller\Handlers\DirectoryHandler.cs" />
     <Compile Include="Controller\Handlers\IDirectoryHandler.cs" />
     <Compile Include="Controller\IImageController.cs" />
@@ -69,8 +68,6 @@
     <Compile Include="Modal\Image\ImageModal.cs" />
     <Compile Include="Modal\Logging\ILoggingModal.cs" />
     <Compile Include="Modal\Logging\LoggingModal.cs" />
-    <Compile Include="Modal\Logging\MessageRecievedEventArgs.cs" />
-    <Compile Include="Modal\Logging\MessageTypeEnum.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
@@ -79,9 +76,10 @@
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Server\ConfigValue.cs" />
+    <Compile Include="Server\ClientHandlers\ClientHandler.cs" />
     <Compile Include="Server\ImageServer.cs" />
-    <Compile Include="Server\LogArchive.cs" />
+    <Compile Include="Modal\Logging\LogArchive.cs" />
+    <Compile Include="Server\ServiceServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -95,6 +93,12 @@
     <EmbeddedResource Include="ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharedInfo\SharedInfo.csproj">
+      <Project>{1d4edf2c-4bda-4113-9672-884272297123}</Project>
+      <Name>SharedInfo</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

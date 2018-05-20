@@ -5,8 +5,9 @@ using System.Runtime.InteropServices;
 using ImageService.Modal;
 using ImageService.Server;
 using System.Configuration;
-using ImageService.Modal.Logging;
-using ImageService.Commands;
+using SharedInfo.Messages;
+using SharedInfo.Commands;
+using System.Threading.Tasks;
 
 namespace ImageService
 {
@@ -16,6 +17,7 @@ namespace ImageService
         private int eventId = 1;    //used to track number of events since initialization
         public ILoggingModal logger;
         private ImageServer server; // the server that listens to the directories
+        private ServiceServer serviceServer; // the server that communicate with gui
 
         public ImageService()
         {
@@ -33,9 +35,12 @@ namespace ImageService
 
         protected override void OnStart(string[] args)
         {
+
             //create logger
             logger = new LoggingModal();
             logger.MessageRecieved += OnMsg;
+            LogArchive archive = new LogArchive();
+            logger.MessageRecieved += archive.OnMsg;
 
             // Update the service state to Start Pending.
             logger.Log(new MessageRecievedEventArgs
@@ -50,13 +55,29 @@ namespace ImageService
             };
             SetServiceStatus(this.ServiceHandle, ref serviceStatus);
 
-            //create server
+            //create directory server
             int size = int.Parse(ConfigurationManager.AppSettings["ThumbnailSize"]);
-            server = new ImageServer(logger, ConfigurationManager.AppSettings["OutputDir"],size);
+            server = new ImageServer(logger, ConfigurationManager.AppSettings["OutputDir"], size);
+
+            logger.Log(new MessageRecievedEventArgs
+            {
+                Status = MessageTypeEnum.INFO,
+                Message = "Starting Server."
+            });
+
+            //create gui server and listen for connections
+            serviceServer = new ServiceServer(server, archive, logger);
+            Task t = new Task(() => serviceServer.Listen());
+            t.Start();
+            logger.Log(new MessageRecievedEventArgs
+            {
+                Status = MessageTypeEnum.INFO,
+                Message = "Server is listening."
+            });
 
             ///start listening to folders
             string[] paths = ConfigurationManager.AppSettings["Handler"].Split(';');
-            foreach(string s in paths)
+            foreach (string s in paths)
                 server.WatchDirectory(s);
 
             // Update the service state to Running.  
@@ -76,11 +97,28 @@ namespace ImageService
                 Status = MessageTypeEnum.INFO,
                 Message = "Stopping service.."
             });
-            //close directory watchers
-            server.SendCommand(new Controller.Handlers.CommandRecievedEventArgs
+            try
             {
-                Type = CommandEnum.CloseCommand
-            });
+                //close directory watchers
+                server.SendCommand(new CommandRecievedEventArgs
+                {
+                    Type = CommandEnum.CloseCommand,
+                    Args = new String[] { "All" }
+
+                });
+
+                //close gui server
+               // serviceServer.Close();
+            }
+            catch (Exception e)
+            {
+                logger.Log(new MessageRecievedEventArgs
+                {
+                    Status = MessageTypeEnum.INFO,
+                    Message = e.Message
+                });
+            }
+
             //notify about service closure
             logger.Log(new MessageRecievedEventArgs
             {
@@ -95,7 +133,24 @@ namespace ImageService
         /// <param name="message">message to log</param>
         public void OnMsg(object sender, MessageRecievedEventArgs message)
         {
-            eventLog.WriteEntry(message.Message,message.Status.Translate(), eventId++);
+
+            EventLogEntryType type;
+            switch (message.Status)
+            {
+                case MessageTypeEnum.FAIL:
+                    type = EventLogEntryType.FailureAudit;
+                    break;
+                case MessageTypeEnum.INFO:
+                    type = EventLogEntryType.Information;
+                    break;
+                case MessageTypeEnum.WARNING:
+                    type = EventLogEntryType.Warning;
+                    break;
+                default:
+                    type = EventLogEntryType.Error;
+                    break;
+            }
+            eventLog.WriteEntry(message.Message, type, eventId++);
         }
 
         [DllImport("advapi32.dll", SetLastError = true)]

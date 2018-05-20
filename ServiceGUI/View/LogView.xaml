@@ -1,0 +1,38 @@
+﻿<Grid Background="#FFE5E5E5" HorizontalAlignment="Stretch" Width="650" Margin="0,0,0,0" x:Class="ServiceGUI.View.LogView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:ServiceGUI.View"
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="650">
+    <Grid.Resources>
+        <local:ColorConverter x:Key="ColorConverter" />
+    </Grid.Resources>
+    <Label Content="Logs" HorizontalAlignment="Center" Height="32" Margin="273,10,274,0" VerticalAlignment="Top" Width="47"/>
+    <ListView Margin="0,60,0,0">
+        <ListView.View>
+            <GridView>
+                <GridViewColumn Header="Type" 
+                                    Width="150"/>
+                <GridViewColumn Header="Message" 
+                                    Width="500"/>
+            </GridView>
+        </ListView.View>
+    </ListView>
+    <ListView HorizontalAlignment="Stretch" Height="312" Margin="0,79,0,0" VerticalAlignment="Top" Width="650" 
+              ItemsSource="{Binding LogList}">
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="500"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="back" Text="{Binding Path=Status}" Margin="2" Background="{Binding Converter={StaticResource ColorConverter}}"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Path=Message}" Margin="2"/>
+                </Grid>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+</Grid>

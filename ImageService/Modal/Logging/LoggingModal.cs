@@ -1,4 +1,5 @@
 ﻿using System;
+using SharedInfo.Messages;
 
 namespace ImageService.Modal
 {
