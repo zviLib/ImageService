@@ -1,4 +1,5 @@
-﻿using ImageService.Commands;
+﻿using SharedInfo.Commands;
+
 
 namespace ImageService.Controller
 {

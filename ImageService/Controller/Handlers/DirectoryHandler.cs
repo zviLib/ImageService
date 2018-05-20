@@ -1,9 +1,9 @@
-﻿using ImageService.Commands;
-using ImageService.Modal;
-using ImageService.Modal.Logging;
+﻿using ImageService.Modal;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using SharedInfo.Commands;
+using SharedInfo.Messages;
 
 namespace ImageService.Controller.Handlers
 {
@@ -35,7 +35,7 @@ namespace ImageService.Controller.Handlers
         {
 
             //close command
-            if (e.Type == CommandEnum.CloseCommand)
+            if (e.Type == CommandEnum.CloseCommand && (e.Args[0]==m_path || e.Args[0]=="All"))
             {
                 //remove from server
                 DirectoryClose.Invoke(this, new DirectoryCloseEventArgs
@@ -49,7 +49,7 @@ namespace ImageService.Controller.Handlers
                 //log 
                 m_logging.Log(new MessageRecievedEventArgs
                 {
-                    Status = MessageTypeEnum.INFO,
+                    Status = MessageTypeEnum.WARNING,
                     Message = "Stopped watching:" + m_path
                 });
             }
