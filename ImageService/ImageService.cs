@@ -108,7 +108,11 @@ namespace ImageService
                 });
 
                 //close gui server
+<<<<<<< HEAD
                 serviceServer.Close();
+=======
+               // serviceServer.Close();
+>>>>>>> 227561cf3af844d48e38108df6f7a63c80bd89fd
             }
             catch (Exception e)
             {

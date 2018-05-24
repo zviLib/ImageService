@@ -77,6 +77,7 @@ namespace ImageService.Server
         /// <param name="arg"></param>
         public void SendCommand(CommandRecievedEventArgs arg)
         {
+<<<<<<< HEAD
             try
             {
                 CommandRecieved.Invoke(this, arg);
@@ -110,6 +111,31 @@ namespace ImageService.Server
                 configs.Add(i, s);
                 i++;
             }
+=======
+            CommandRecieved.Invoke(this, arg);
+        }
+
+        /// <summary>
+        /// reads app config and puts in a dictionary
+        /// </summary>
+        /// <returns>dictionary with the app configs</returns>
+        public Dictionary<int, string> GetAppConfig()
+        {
+            Dictionary<int, string> configs = new Dictionary<int, string>();
+            // add output directory
+            configs.Add((int)AppConfigValuesEnum.OutputDirectory, ConfigurationManager.AppSettings["OutputDir"]);
+            configs.Add((int)AppConfigValuesEnum.SourceName, ConfigurationManager.AppSettings["SourceName"]);
+            configs.Add((int)AppConfigValuesEnum.LogName, ConfigurationManager.AppSettings["LogName"]);
+            configs.Add((int)AppConfigValuesEnum.ThumbnailSize, ConfigurationManager.AppSettings["ThumbnailSize"]);
+ 
+            // add watched directories
+            int i = 4;
+            foreach (string s in watchedDirs)
+            {
+                configs.Add(i, s);
+                i++;
+            }
+>>>>>>> 227561cf3af844d48e38108df6f7a63c80bd89fd
             return configs;
         }
         

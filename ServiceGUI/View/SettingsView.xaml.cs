@@ -30,6 +30,7 @@ namespace ServiceGUI.View
             string s = (string)list.SelectedItem;
             svm.CloseDirectory(s);
         }
+<<<<<<< HEAD
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -39,5 +40,7 @@ namespace ServiceGUI.View
             else
                 removeButton.IsEnabled = true;
         }
+=======
+>>>>>>> 227561cf3af844d48e38108df6f7a63c80bd89fd
     }
 }

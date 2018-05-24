@@ -14,7 +14,11 @@ namespace ServiceGUI.Model
     class Client
     {
         #region members
+<<<<<<< HEAD
         private static bool connected = false; // used to check if a connection has been established
+=======
+        private static TcpClient m_client = null; // used to check if a connection has been established
+>>>>>>> 227561cf3af844d48e38108df6f7a63c80bd89fd
         private static NetworkStream stream;    // used for communication with the server
         private static BinaryWriter writer;     // used for writing to server
         private static BinaryReader reader;     // used for reading from server
@@ -26,12 +30,20 @@ namespace ServiceGUI.Model
         /// tries to connect to the server
         /// </summary>
         /// <returns>whether a connection has been established</returns>
+<<<<<<< HEAD
         private static bool Connect()
+=======
+        public static bool Connect()
+>>>>>>> 227561cf3af844d48e38108df6f7a63c80bd89fd
         {
 
             //connect to server
             IPEndPoint ep = new IPEndPoint(IPAddress.Parse(ServerInfo.IP), ServerInfo.PORT);
+<<<<<<< HEAD
             TcpClient m_client = new TcpClient();
+=======
+            m_client = new TcpClient();
+>>>>>>> 227561cf3af844d48e38108df6f7a63c80bd89fd
             try
             {
                 m_client.Connect(ep);
@@ -49,6 +61,7 @@ namespace ServiceGUI.Model
 
             return true;
         }
+<<<<<<< HEAD
         /// <summary>
         /// used to check if client can connect to server
         /// </summary>
@@ -63,6 +76,8 @@ namespace ServiceGUI.Model
 
             return connected;
         }
+=======
+>>>>>>> 227561cf3af844d48e38108df6f7a63c80bd89fd
 
         /// <summary>
         /// get the server's app config
@@ -72,10 +87,16 @@ namespace ServiceGUI.Model
         {
             Dictionary<int, string> values = new Dictionary<int, string>();
 
+<<<<<<< HEAD
             //check connection
             if (!TryConnection()) 
                 return values;
             
+=======
+            if (m_client == null)
+                if (!Connect())
+                    return values;
+>>>>>>> 227561cf3af844d48e38108df6f7a63c80bd89fd
 
             //send appConfig command
             writer.Write((int)CommandEnum.GetAppConfig);
@@ -97,6 +118,7 @@ namespace ServiceGUI.Model
             return values;
         }
 
+<<<<<<< HEAD
         /// <summary>
         /// listen for new commands received from the server
         /// </summary>
@@ -105,6 +127,11 @@ namespace ServiceGUI.Model
             if (!TryConnection())
                 return;
 
+=======
+
+        public static void ListenForCommands()
+        {
+>>>>>>> 227561cf3af844d48e38108df6f7a63c80bd89fd
             //request for log history
             writer.Write((int)CommandEnum.TrackLogs);
 
@@ -149,8 +176,14 @@ namespace ServiceGUI.Model
 
         public static void SendCommand(CommandRecievedEventArgs args)
         {
+<<<<<<< HEAD
             if (!TryConnection())
                 return;
+=======
+            if (m_client == null)
+                if (!Connect())
+                    return;
+>>>>>>> 227561cf3af844d48e38108df6f7a63c80bd89fd
 
             writer.Write((int)args.Type);
             if (args.Type == CommandEnum.CloseCommand)

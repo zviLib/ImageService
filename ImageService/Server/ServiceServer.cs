@@ -68,9 +68,13 @@ namespace ImageService.Server
             if (listener != null)
                 listener.Stop();
 
+<<<<<<< HEAD
             // if server has listeners - norify them about closure
             if (ServerClosed != null)
                 ServerClosed.Invoke(null, null);
+=======
+            ServerClosed.Invoke(null,null);
+>>>>>>> 227561cf3af844d48e38108df6f7a63c80bd89fd
         }
 
         private void HandleClient(TcpClient client)
@@ -85,12 +89,20 @@ namespace ImageService.Server
             {
                 //read command enum
                 type = handler.ReadCommand();
+<<<<<<< HEAD
 
+=======
+                
+>>>>>>> 227561cf3af844d48e38108df6f7a63c80bd89fd
                 bool res = false;
                 if (type == CommandEnum.TrackLogs)
                 {
                     //send old logs
+<<<<<<< HEAD
                     new GetLogsCommand(handler, m_archive, ilogging).Execute(new String[] { "" }, out res);
+=======
+                    new GetLogsCommand(handler, m_archive,ilogging).Execute(new String[] { "" }, out res);
+>>>>>>> 227561cf3af844d48e38108df6f7a63c80bd89fd
                     // client listens for new logs
                     m_server.M_logging.MessageRecieved += handler.OnMsg;
                 }
@@ -103,7 +115,11 @@ namespace ImageService.Server
                     m_server.CloseCommandRecieved += handler.CloseCommand;
                 }
 
+<<<<<<< HEAD
                 if (type == CommandEnum.CloseCommand)
+=======
+                if(type == CommandEnum.CloseCommand)
+>>>>>>> 227561cf3af844d48e38108df6f7a63c80bd89fd
                 {
                     string s = handler.ReadString();
                     m_server.SendCommand(new CommandRecievedEventArgs
