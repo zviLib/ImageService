@@ -6,7 +6,10 @@
         xmlns:views="clr-namespace:ServiceGUI.View"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="650" ResizeMode="CanMinimize">
-    <Grid>
+    <Window.Resources>
+        <views:ConnectionConverter x:Key="ConnectionConverter" />
+    </Window.Resources>
+    <Grid Background="{Binding Converter={StaticResource ConnectionConverter}}">
         <TabControl HorizontalAlignment="Left" Height="419" Margin="0,0,0,0" VerticalAlignment="Top" Width="650">
             <TabItem Header="Settings">
                 <views:SettingsView/>

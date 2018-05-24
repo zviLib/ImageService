@@ -77,7 +77,17 @@ namespace ImageService.Server
         /// <param name="arg"></param>
         public void SendCommand(CommandRecievedEventArgs arg)
         {
-            CommandRecieved.Invoke(this, arg);
+            try
+            {
+                CommandRecieved.Invoke(this, arg);
+            } catch (Exception e)
+            {
+                M_logging.Log(new MessageRecievedEventArgs
+                {
+                    Status = MessageTypeEnum.FAIL,
+                    Message = e.Message
+                });
+            }
         }
 
         /// <summary>

@@ -15,6 +15,7 @@ namespace ImageService.Controller.Handlers
         private FileSystemWatcher m_dirWatcher;             // The Watcher of the Dir
         private string m_path;                              // The Path of directory
         private string[] trackedExt;                        // The extantions that we are currently tracking
+        private bool listening;
         #endregion
 
         public event EventHandler<DirectoryCloseEventArgs> DirectoryClose;              // The Event That Notifies that the Directory is being closed
@@ -37,6 +38,9 @@ namespace ImageService.Controller.Handlers
             //close command
             if (e.Type == CommandEnum.CloseCommand && (e.Args[0]==m_path || e.Args[0]=="All"))
             {
+                if (!listening)
+                    return;
+
                 //remove from server
                 DirectoryClose.Invoke(this, new DirectoryCloseEventArgs
                 {
@@ -45,6 +49,8 @@ namespace ImageService.Controller.Handlers
                 //close watcher
                 m_dirWatcher.Dispose();
                 m_dirWatcher.EnableRaisingEvents = false;
+
+                listening = false;
 
                 //log 
                 m_logging.Log(new MessageRecievedEventArgs
@@ -75,6 +81,8 @@ namespace ImageService.Controller.Handlers
                     Status = MessageTypeEnum.INFO,
                     Message = "Started watching directory:" + dirPath,
                 });
+
+                listening = true;
                 return true;
             }
             catch (Exception e)

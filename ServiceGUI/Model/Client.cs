@@ -26,7 +26,7 @@ namespace ServiceGUI.Model
         /// tries to connect to the server
         /// </summary>
         /// <returns>whether a connection has been established</returns>
-        public static bool Connect()
+        private static bool Connect()
         {
 
             //connect to server
@@ -49,6 +49,20 @@ namespace ServiceGUI.Model
 
             return true;
         }
+        /// <summary>
+        /// used to check if client can connect to server
+        /// </summary>
+        /// <returns>if the connection is successful</returns>
+        public static bool TryConnection()
+        {
+            if (connected)
+                return true;
+
+            //if not connected - attempt to connect
+            connected = Connect();
+
+            return connected;
+        }
 
         /// <summary>
         /// get the server's app config
@@ -58,11 +72,10 @@ namespace ServiceGUI.Model
         {
             Dictionary<int, string> values = new Dictionary<int, string>();
 
-            if (!connected) {
-                connected = Connect();
-                if (!connected)
-                    return values;
-            }
+            //check connection
+            if (!TryConnection()) 
+                return values;
+            
 
             //send appConfig command
             writer.Write((int)CommandEnum.GetAppConfig);
@@ -84,15 +97,13 @@ namespace ServiceGUI.Model
             return values;
         }
 
-
+        /// <summary>
+        /// listen for new commands received from the server
+        /// </summary>
         public static void ListenForCommands()
         {
-            if (!connected)
-            {
-                connected = Connect();
-                if (!connected)
-                    return;
-            }
+            if (!TryConnection())
+                return;
 
             //request for log history
             writer.Write((int)CommandEnum.TrackLogs);
@@ -138,12 +149,8 @@ namespace ServiceGUI.Model
 
         public static void SendCommand(CommandRecievedEventArgs args)
         {
-            if (!connected)
-            {
-                connected = Connect();
-                if (!connected)
-                    return;
-            }
+            if (!TryConnection())
+                return;
 
             writer.Write((int)args.Type);
             if (args.Type == CommandEnum.CloseCommand)
