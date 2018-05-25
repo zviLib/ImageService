@@ -65,12 +65,7 @@ namespace ImageService.Server
         public void Close()
         {
             Alive = false;
-            if (listener != null)
-                listener.Stop();
-
-            // if server has listeners - norify them about closure
-            if (ServerClosed != null)
-                ServerClosed.Invoke(null, null);
+                 
         }
 
         private void HandleClient(TcpClient client)

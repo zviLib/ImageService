@@ -68,8 +68,8 @@ namespace ImageService.Server.ClientHandlers
         {
             try
             {
-                writer.Close();
-                reader.Close();
+                reader.Dispose();
+                writer.Dispose();
                 stream.Close();
             }
             catch (Exception)

@@ -109,6 +109,13 @@ namespace ImageService
 
                 //close gui server
                 serviceServer.Close();
+
+                //notify about service closure
+                logger.Log(new MessageRecievedEventArgs
+                {
+                    Status = MessageTypeEnum.INFO,
+                    Message = "Service Stopped."
+                });
             }
             catch (Exception e)
             {
@@ -119,12 +126,7 @@ namespace ImageService
                 });
             }
 
-            //notify about service closure
-            logger.Log(new MessageRecievedEventArgs
-            {
-                Status = MessageTypeEnum.INFO,
-                Message = "Service Stopped."
-            });
+
         }
         /// <summary>
         /// used to write messages to the service's event log

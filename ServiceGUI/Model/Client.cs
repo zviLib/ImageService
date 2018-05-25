@@ -35,7 +35,6 @@ namespace ServiceGUI.Model
             try
             {
                 m_client.Connect(ep);
-                Console.WriteLine("Connected");
                 stream = m_client.GetStream();
                 writer = new BinaryWriter(stream);
                 reader = new BinaryReader(stream);
@@ -43,7 +42,6 @@ namespace ServiceGUI.Model
             }
             catch (Exception)
             {
-                Console.WriteLine("can't connect");
                 return false;
             }
 

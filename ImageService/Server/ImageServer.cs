@@ -27,7 +27,7 @@ namespace ImageService.Server
         /// <param name="logModal">The logging modal used by the server</param>
         /// <param name="outputFolder">Where to save our backup images</param>
         /// <param name="thumbnailSize">To size of thumbnail to create</param>
-        public ImageServer(ILoggingModal logModal,string outputFolder,int thumbnailSize)
+        public ImageServer(ILoggingModal logModal, string outputFolder, int thumbnailSize)
         {
             M_logging = logModal;
             m_controller = new ImageModal(outputFolder, thumbnailSize);
@@ -40,7 +40,7 @@ namespace ImageService.Server
         /// <param name="path">path to the directory</param>
         /// <returns>the success of the procedure</returns>
         public bool WatchDirectory(string path)
-        { 
+        {
             DirectoryHandler dh = new DirectoryHandler(m_controller, M_logging);
             try
             {
@@ -68,7 +68,8 @@ namespace ImageService.Server
             dh.DirectoryClose -= CloseServer;
             watchedDirs.Remove(args.Path);
             //notify about closure
-            CloseCommandRecieved.Invoke(dh, args);
+            if (CloseCommandRecieved != null)
+                CloseCommandRecieved.Invoke(dh, args);
         }
 
         /// <summary>
@@ -79,8 +80,10 @@ namespace ImageService.Server
         {
             try
             {
-                CommandRecieved.Invoke(this, arg);
-            } catch (Exception e)
+                if (CommandRecieved != null)
+                    CommandRecieved.Invoke(this, arg);
+            }
+            catch (Exception e)
             {
                 M_logging.Log(new MessageRecievedEventArgs
                 {
@@ -102,7 +105,7 @@ namespace ImageService.Server
             configs.Add((int)AppConfigValuesEnum.SourceName, ConfigurationManager.AppSettings["SourceName"]);
             configs.Add((int)AppConfigValuesEnum.LogName, ConfigurationManager.AppSettings["LogName"]);
             configs.Add((int)AppConfigValuesEnum.ThumbnailSize, ConfigurationManager.AppSettings["ThumbnailSize"]);
- 
+
             // add watched directories
             int i = 4;
             foreach (string s in watchedDirs)
@@ -112,7 +115,7 @@ namespace ImageService.Server
             }
             return configs;
         }
-        
-        
+
+
     }
-}   
+}
