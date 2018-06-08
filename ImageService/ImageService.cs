@@ -18,6 +18,7 @@ namespace ImageService
         public ILoggingModal logger;
         private ImageServer server; // the server that listens to the directories
         private ServiceServer serviceServer; // the server that communicate with gui
+        public static bool started = false;
 
         public ImageService()
         {
@@ -83,6 +84,7 @@ namespace ImageService
             // Update the service state to Running.  
             serviceStatus.dwCurrentState = ServiceState.SERVICE_RUNNING;
             SetServiceStatus(this.ServiceHandle, ref serviceStatus);
+            started = true;
             logger.Log(new MessageRecievedEventArgs
             {
                 Status = MessageTypeEnum.INFO,
@@ -108,7 +110,7 @@ namespace ImageService
                 });
 
                 //close gui server
-                serviceServer.Close();
+               // serviceServer.Close();
 
                 //notify about service closure
                 logger.Log(new MessageRecievedEventArgs
@@ -126,7 +128,14 @@ namespace ImageService
                 });
             }
 
-
+            // Update the service state to Stopped.  
+            ServiceStatus serviceStatus = new ServiceStatus
+            {
+                dwCurrentState = ServiceState.SERVICE_STOPPED,
+                dwWaitHint = 100000
+            };
+            SetServiceStatus(this.ServiceHandle, ref serviceStatus);
+            started = false;
         }
         /// <summary>
         /// used to write messages to the service's event log

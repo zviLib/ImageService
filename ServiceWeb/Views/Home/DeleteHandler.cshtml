@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewBag.Title = "DeleteHandler";
+}
+
+<h2>Delete Handler</h2>
+
+<p> Please confirm deletion of:</p>
+<p id="name"></p>
+<button id="delete">Delete</button>
+<button id="cancel">Cancel</button>
+
+
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script>
+    // backup text
+    var txt = localStorage.getItem("selectHand");
+    $("#name").text(txt);
+
+    // on cancel - delete selection and return
+    $("#cancel").click(function () {
+        localStorage.removeItem("selectHand");
+        @Url.Action("RemoveHandler", "Home", new { path = "all" }));
+        window.location.href = '/Home/Config';
+        return false;
+    })
+    
+</script>

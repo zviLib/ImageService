@@ -8,12 +8,14 @@ namespace ImageService.Server.ClientHandlers
 {
     class ClientHandler
     {
-        private static NetworkStream stream;
-        private static BinaryWriter writer;
-        private static BinaryReader reader;
+        private NetworkStream stream;
+        private BinaryWriter writer;
+        private BinaryReader reader;
+        private TcpClient m_client;
 
         public ClientHandler(TcpClient client)
         {
+            m_client = client;
             stream = client.GetStream();
             writer = new BinaryWriter(stream);
             reader = new BinaryReader(stream);
@@ -26,9 +28,9 @@ namespace ImageService.Server.ClientHandlers
         /// <param name="message">path of the closed directory</param>
         public void CloseCommand(object sender, DirectoryCloseEventArgs message)
         {
-                //write the path of the closed handler
-                writer.Write((int)CommandEnum.CloseCommand);
-                writer.Write(message.Path);
+            //write the path of the closed handler
+            writer.Write((int)CommandEnum.CloseCommand);
+            writer.Write(message.Path);
 
         }
         /// <summary>
@@ -38,12 +40,12 @@ namespace ImageService.Server.ClientHandlers
         /// <param name="message">the log content</param>
         public void OnMsg(object sender, MessageRecievedEventArgs message)
         {
-                writer.Write((int)CommandEnum.NewLog);
-                writer.Write((int)message.Status);
-                writer.Write(message.Message);
+            writer.Write((int)CommandEnum.NewLog);
+            writer.Write((int)message.Status);
+            writer.Write(message.Message);
 
         }
-        
+
         public CommandEnum ReadCommand()
         {
             return (CommandEnum)reader.ReadInt32();

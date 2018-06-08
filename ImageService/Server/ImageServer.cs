@@ -63,7 +63,7 @@ namespace ImageService.Server
         /// <param name="args">unused</param>
         public void CloseServer(object sender, DirectoryCloseEventArgs args)
         {
-            DirectoryHandler dh = (DirectoryHandler)sender;
+            DirectoryHandler dh = (DirectoryHandler)sender;          
             CommandRecieved -= dh.OnCommandRecieved;
             dh.DirectoryClose -= CloseServer;
             watchedDirs.Remove(args.Path);

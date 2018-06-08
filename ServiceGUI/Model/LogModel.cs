@@ -9,6 +9,7 @@ namespace ServiceGUI.Model
         public void StartListening(ILogViewModel viewModel)
         {
             Client.LogRecieved += viewModel.OnMsg;
+            //listen for new logs
             Task t = new Task(() => Client.ListenForCommands());
             t.Start();
         }

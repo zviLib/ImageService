@@ -10,6 +10,8 @@ namespace SharedInfo.Commands
         CloseCommand,
         TrackLogs,
         GetAppConfig,
-        NewLog
+        NewLog,
+        EmptyCommand,
+        ServiceStatus
     }
 }

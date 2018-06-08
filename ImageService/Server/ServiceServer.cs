@@ -65,7 +65,6 @@ namespace ImageService.Server
         public void Close()
         {
             Alive = false;
-                 
         }
 
         private void HandleClient(TcpClient client)
@@ -90,7 +89,7 @@ namespace ImageService.Server
                     m_server.M_logging.MessageRecieved += handler.OnMsg;
                 }
 
-                if (type == CommandEnum.GetAppConfig)
+                else if (type == CommandEnum.GetAppConfig)
                 {
                     //send app config
                     new GetAppConfigCommand(handler, m_server, ilogging).Execute(new String[] { "" }, out res);
@@ -98,7 +97,7 @@ namespace ImageService.Server
                     m_server.CloseCommandRecieved += handler.CloseCommand;
                 }
 
-                if (type == CommandEnum.CloseCommand)
+                else if (type == CommandEnum.CloseCommand)
                 {
                     string s = handler.ReadString();
                     m_server.SendCommand(new CommandRecievedEventArgs
@@ -106,6 +105,10 @@ namespace ImageService.Server
                         Type = CommandEnum.CloseCommand,
                         Args = new string[] { s }
                     });
+                }
+                else if (type == CommandEnum.ServiceStatus)
+                {
+                    new GetServiceStatusCommand(handler).Execute(null, out res);
                 }
             }
 

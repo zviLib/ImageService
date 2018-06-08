@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewBag.Title = "Config";
+}
+
+<h1>Configuration</h1>
+
+
+@foreach (var str in ViewBag.list)
+{
+    <button class="btn-default">@str</button>
+    <br />
+}
+
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script>
+    $(".btn-default").click(function () {
+        localStorage.setItem("selectHand", $(this).text());
+        window.location.href = '/Home/DeleteHandler';
+        return false;
+
+    });
+</script>
