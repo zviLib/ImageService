@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewBag.Title = "Config";
+}
+
+<h1>Configuration</h1>
+
+<table class="table">
+    <tr>
+        <th>Output Directory:</th>
+        <th>@ViewBag.Output</th>
+    </tr>
+    <tr>
+        <th>Source Name:</th>
+        <th>@ViewBag.Source</th>
+    </tr>
+    <tr>
+        <th>Log Name:</th>
+        <th>@ViewBag.Log</th>
+    </tr>
+    <tr>
+        <th>ThumbSize:</th>
+        <th>@ViewBag.Thumb</th>
+    </tr>
+</table>
+
+<h4>Watched directories:</h4>
+<h5>Click to stop watching</h5>
+@foreach (var str in ViewBag.list)
+{
+    <button class="btn-default">@str</button>
+    <br />
+}
+
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script>
+    $(".btn-default").click(function () {
+        localStorage.setItem("selectHand", $(this).text());
+        window.location.href = '/Config/DeleteHandler';
+        return false;
+
+    });
+</script>

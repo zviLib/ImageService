@@ -67,8 +67,8 @@ namespace ImageService.Modal
                 }
                 else // if there's no taken time for the photo
                 {
-                    picPath.Append("\\Unknown Time");
-                    thumbPath.Append("\\Unknown Time");
+                    picPath.Append("\\UnknownTime");
+                    thumbPath.Append("\\UnknownTime");
                     if (!System.IO.Directory.Exists(picPath.ToString()))
                         System.IO.Directory.CreateDirectory(picPath.ToString());
                     if (!System.IO.Directory.Exists(thumbPath.ToString()))

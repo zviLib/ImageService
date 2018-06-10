@@ -31,7 +31,6 @@ namespace ImageService.Server.ClientHandlers
             //write the path of the closed handler
             writer.Write((int)CommandEnum.CloseCommand);
             writer.Write(message.Path);
-
         }
         /// <summary>
         /// notifies gui that a new log has been writen

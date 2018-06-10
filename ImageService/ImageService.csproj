@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Commands\GetAppConfigCommand.cs" />
     <Compile Include="Commands\GetLogsCommand.cs" />
+    <Compile Include="Commands\GetLogsHistoryCommand.cs" />
     <Compile Include="Commands\GetServiceStatusCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\NewFileCommand.cs" />

@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "DeleteHandler";
 }
 
@@ -7,9 +6,8 @@
 
 <p> Please confirm deletion of:</p>
 <p id="name"></p>
-<button id="delete">Delete</button>
+<button id="delete">OK</button>
 <button id="cancel">Cancel</button>
-
 
 <script src="~/Scripts/jquery-1.10.2.js"></script>
 <script>
@@ -20,9 +18,23 @@
     // on cancel - delete selection and return
     $("#cancel").click(function () {
         localStorage.removeItem("selectHand");
-        @Url.Action("RemoveHandler", "Home", new { path = "all" }));
-        window.location.href = '/Home/Config';
+        window.location.href = '/Config';
         return false;
-    })
-    
+    });
+
+    $("#delete").click(function () {
+
+        var input = {
+            path: $("#name").text()
+        };
+
+        localStorage.removeItem("selectHand");
+
+        $.post("@Url.Action("RemoveHandler")", input, function func(data) { @Url.Action("Index", "Config");
+        },"json");
+        
+        //window.location.href = '/Config';
+        return false;
+    });
+
 </script>

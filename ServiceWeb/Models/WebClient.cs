@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace ServiceWeb.Models
 {
@@ -16,8 +17,6 @@ namespace ServiceWeb.Models
         private static NetworkStream stream;    // used for communication with the server
         private static BinaryWriter writer;     // used for writing to server
         private static BinaryReader reader;     // used for reading from server
-        public static event EventHandler<MessageRecievedEventArgs> LogRecieved; // notifies listeners on new logs
-        public static event EventHandler<DirectoryCloseEventArgs> DirectoryClosed;  // notifies listeners on directory closure
         #endregion members
 
         /// <summary>
@@ -110,56 +109,7 @@ namespace ServiceWeb.Models
             return values;
         }
 
-        /// <summary>
-        /// listen for new commands received from the server
-        /// </summary>
-        public static void ListenForCommands()
-        {
-            if (!TryConnection())
-                return;
-
-            //request for log history
-            writer.Write((int)CommandEnum.TrackLogs);
-
-            //will exit when stream is closed
-            try
-            {
-                CommandEnum command;
-                MessageTypeEnum type;
-                string s;
-                while (true)
-                {
-                    //read new command
-                    command = (CommandEnum)reader.ReadInt32();
-
-                    if (command == CommandEnum.NewLog)
-                    {
-                        type = (MessageTypeEnum)reader.ReadInt32();
-                        s = reader.ReadString();
-                        LogRecieved.Invoke(null, new MessageRecievedEventArgs
-                        {
-                            Status = type,
-                            Message = s
-                        });
-                    }
-
-                    if (command == CommandEnum.CloseCommand)
-                    {
-                        s = reader.ReadString();
-                        DirectoryClosed.Invoke(null, new DirectoryCloseEventArgs
-                        {
-                            Path = s
-                        });
-                    }
-                }
-            }
-            catch (Exception)
-            {
-
-            }
-        }
-
-
+       
         public static void SendCommand(CommandRecievedEventArgs args)
         {
             if (!TryConnection())
@@ -169,6 +119,49 @@ namespace ServiceWeb.Models
             if (args.Type == CommandEnum.CloseCommand)
                 writer.Write(args.Args[0]);
         }
+
+        public static DirectoryCloseEventArgs ReadCloseCommand()
+        {
+
+            if (!TryConnection())
+                return null ;
+
+            //read command enum
+            reader.ReadInt32();
+            //read path
+            string s = reader.ReadString();
+
+            return new DirectoryCloseEventArgs
+            {
+                Path = s
+            };
+
+        }
+
+        public static List<Log> GetLogs()
+        {
+            List<Log> logs = new List<Log>();
+            SendCommand(new CommandRecievedEventArgs
+            {
+                Type = CommandEnum.GetLogHistory
+            });
+
+            //read size of list
+            int size = reader.ReadInt32();
+            logs.Capacity = size;
+
+            for (; size > 0; size--)
+            {
+                logs.Add(new Log
+                {
+                    Type = (MessageTypeEnum)reader.ReadInt32(),
+                    Message = reader.ReadString()
+                });
+            }
+
+            return logs;
+        }
+
 
         public static void Close()
         {

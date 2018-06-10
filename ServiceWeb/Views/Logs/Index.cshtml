@@ -1,0 +1,48 @@
+﻿@model IEnumerable<ServiceWeb.Models.Log>
+
+@{
+    ViewBag.Title = "Logs";
+}
+
+<h2>Logs</h2>
+
+<div id="input">
+    <h4>Filter by type:</h4>
+    <input type="text" id="filterType" size="5" width="150" />
+    <input type="button" id="btn" value="Filter" />
+</div>
+
+
+<table class="table" id="logTable">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Type)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Message)
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Message)
+            </td>
+        </tr>
+    }
+
+</table>
+
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script>
+    $("#btn").click(function () {
+        var input = {
+            input: $("#filterType").val()
+        };
+        $.post("@Url.Action("Filter")", input);
+        window.location.href = '/Logs/Filtered';
+    });
+</script>

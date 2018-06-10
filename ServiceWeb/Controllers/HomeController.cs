@@ -6,20 +6,14 @@ using System.IO;
 using System.Web.Mvc;
 using SharedInfo.Commands;
 using SharedInfo.Messages;
+using System.Threading.Tasks;
 
 namespace ServiceWeb.Controllers
 {
     public class HomeController : Controller
     {
-
-        public static List<string> handlers;
-
+        
         public ActionResult Index()
-        {
-            return View();
-        }
-
-        public ActionResult ImageWeb()
         {
             // get service status
             ViewBag.Status = WebClient.IsServiceUp();
@@ -29,7 +23,7 @@ namespace ServiceWeb.Controllers
             // get students list
             try
             {
-                string path = Server.MapPath("..");
+                string path = Server.MapPath(".");
                 reader = new StreamReader(path + "/App_Data/details.txt");
                 string line;
                 string[] details;
@@ -60,59 +54,24 @@ namespace ServiceWeb.Controllers
             }
 
 
-            ViewBag.Sum = 15;
+            ViewBag.Sum = CountPhotos(Server.MapPath(".") + "\\Images");
 
             return View(students);
         }
 
-        public ActionResult Config()
+        private int CountPhotos(string path)
         {
-            if (handlers == null)
+            
+            int num = Directory.GetFiles(path).Length;
+
+            //scan all sub-folders
+            foreach (string s in Directory.GetDirectories(path))
             {
-                Dictionary<int, string> configs = WebClient.getAppConfig();
-
-                handlers = new List<string>();
-
-                foreach (KeyValuePair<int, string> val in configs)
-                    if (val.Key > 3)
-                        handlers.Add(val.Value);
-
-                WebClient.DirectoryClosed += DirectoryClosed;
+                if (!s.Contains("thumbnail"))
+                    num+= CountPhotos(s);
             }
 
-            ViewBag.list = handlers;
-
-
-            return View();
-        }
-
-        public ActionResult DeleteHandler()
-        {
-            return View();
-        }
-
-        public ActionResult RemoveHandler(string path)
-        {
-            WebClient.SendCommand(new CommandRecievedEventArgs
-            {
-                Type = CommandEnum.CloseCommand,
-                Args = new string[] { path }
-            });
-
-            return RedirectToAction("Config");
-        }
-
-        public void DirectoryClosed(object sender, DirectoryCloseEventArgs args)
-        {
-            if (handlers != null)
-                handlers.Remove(args.Path);
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            return num;
         }
     }
 }

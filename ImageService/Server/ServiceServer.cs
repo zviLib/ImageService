@@ -80,6 +80,13 @@ namespace ImageService.Server
                 //read command enum
                 type = handler.ReadCommand();
 
+
+                ilogging.Log(new MessageRecievedEventArgs
+                {
+                    Status = MessageTypeEnum.INFO,
+                    Message = "Received Command: " + type.ToString()
+                });
+
                 bool res = false;
                 if (type == CommandEnum.TrackLogs)
                 {
@@ -94,7 +101,7 @@ namespace ImageService.Server
                     //send app config
                     new GetAppConfigCommand(handler, m_server, ilogging).Execute(new String[] { "" }, out res);
                     //listen for future closures of handlers
-                    m_server.CloseCommandRecieved += handler.CloseCommand;
+                    //m_server.CloseCommandRecieved += handler.CloseCommand;
                 }
 
                 else if (type == CommandEnum.CloseCommand)
@@ -110,8 +117,14 @@ namespace ImageService.Server
                 {
                     new GetServiceStatusCommand(handler).Execute(null, out res);
                 }
+                else if (type == CommandEnum.GetLogHistory)
+                {
+                    new GetLogsHistoryCommand(handler, m_archive, ilogging).Execute(new String[] { "" }, out res);
+                }
             }
 
+            ServerClosed -= handler.Close;
+            m_server.CloseCommandRecieved -= handler.CloseCommand;
             client.Close();
         }
     }

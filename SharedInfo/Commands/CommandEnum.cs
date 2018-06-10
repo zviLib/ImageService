@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SharedInfo.Commands
+﻿namespace SharedInfo.Commands
 {
     public enum CommandEnum : int
     {
@@ -11,7 +7,8 @@ namespace SharedInfo.Commands
         TrackLogs,
         GetAppConfig,
         NewLog,
-        EmptyCommand,
-        ServiceStatus
+        ServiceStatus,
+        ClientDiscconect,
+        GetLogHistory
     }
 }
