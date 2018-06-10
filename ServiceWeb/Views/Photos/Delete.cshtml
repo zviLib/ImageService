@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+<h3>Confirm deletion of:</h3>
+<div class="row">
+    <div>
+        <img src=@ViewBag.ThumbPath alt=@ViewBag.Label>
+        <div class="caption">
+            <h3>@ViewBag.Label</h3>
+            <p>@ViewBag.TakenMonth.@ViewBag.TakenYear</p>
+            <p><a href="@Url.Action("DeletePhoto", "Photos", new { id= ViewBag.ID })" class="btn btn-default" role="button">Delete</a><a href="@Url.Action("Index", "Photos")" class="btn btn-default" role="button">Cancel</a></p>
+        </div>
+    </div>
+</div>

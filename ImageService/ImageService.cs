@@ -123,7 +123,7 @@ namespace ImageService
             {
                 logger.Log(new MessageRecievedEventArgs
                 {
-                    Status = MessageTypeEnum.INFO,
+                    Status = MessageTypeEnum.FAIL,
                     Message = e.Message
                 });
             }

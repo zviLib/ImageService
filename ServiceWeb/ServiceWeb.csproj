@@ -146,6 +146,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LogsController.cs" />
     <Compile Include="Controllers\PhotosController.cs" />
+    <Compile Include="Models\Handler.cs" />
     <Compile Include="Models\Log.cs" />
     <Compile Include="Models\Photo.cs" />
     <Compile Include="Models\Student.cs" />
@@ -153,6 +154,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Writer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -195,11 +197,12 @@
     <Content Include="Views\Home\Index2.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Config\Index.cshtml" />
-    <Content Include="Views\Config\DeleteHandler.cshtml" />
+    <Content Include="Views\Config\Delete.cshtml" />
     <Content Include="Views\Logs\Index.cshtml" />
     <Content Include="Views\Logs\Filtered.cshtml" />
     <Content Include="Views\Photos\Index.cshtml" />
-    <Content Include="Views\Config\Result.cshtml" />
+    <Content Include="Views\Photos\View.cshtml" />
+    <Content Include="Views\Photos\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

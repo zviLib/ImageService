@@ -72,6 +72,8 @@ namespace ServiceWeb.Models
             if (reader.ReadInt32() == 0)
                 return false;
 
+            Writer.WriteLine("got status");
+
             return true;
 
         }
@@ -123,13 +125,17 @@ namespace ServiceWeb.Models
         public static DirectoryCloseEventArgs ReadCloseCommand()
         {
 
-            if (!TryConnection())
-                return null ;
+            //if (!TryConnection())
+            //    return null ;
 
+            Writer.WriteLine("Reading int");
             //read command enum
-            reader.ReadInt32();
+            int i = reader.ReadInt32();
+            Writer.WriteLine("int = "+i);
             //read path
+            Writer.WriteLine("Reading string");
             string s = reader.ReadString();
+            Writer.WriteLine("string = " + s);
 
             return new DirectoryCloseEventArgs
             {
@@ -141,6 +147,10 @@ namespace ServiceWeb.Models
         public static List<Log> GetLogs()
         {
             List<Log> logs = new List<Log>();
+
+            if (!TryConnection())
+                return logs;
+
             SendCommand(new CommandRecievedEventArgs
             {
                 Type = CommandEnum.GetLogHistory

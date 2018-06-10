@@ -100,8 +100,6 @@ namespace ImageService.Server
                 {
                     //send app config
                     new GetAppConfigCommand(handler, m_server, ilogging).Execute(new String[] { "" }, out res);
-                    //listen for future closures of handlers
-                    //m_server.CloseCommandRecieved += handler.CloseCommand;
                 }
 
                 else if (type == CommandEnum.CloseCommand)

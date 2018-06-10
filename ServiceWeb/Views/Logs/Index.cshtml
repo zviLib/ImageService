@@ -42,7 +42,8 @@
         var input = {
             input: $("#filterType").val()
         };
-        $.post("@Url.Action("Filter")", input);
-        window.location.href = '/Logs/Filtered';
+        $.post("@Url.Action("Filter")", input).done(function func() {
+            window.location.href = '/Logs/Filtered';});
+        
     });
 </script>

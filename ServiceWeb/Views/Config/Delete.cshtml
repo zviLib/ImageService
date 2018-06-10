@@ -1,0 +1,9 @@
+﻿@{
+    ViewBag.Title = "Delete";
+}
+
+
+<h3> Please confirm deletion of:</h3>
+<p id="name">@ViewBag.path</p>
+<a href="@Url.Action("RemoveHandler", "Config", new { id= ViewBag.id })" class="btn btn-default" role="button">Delete</a>
+<a href="@Url.Action("Index", "Config")" class="btn btn-default" role="button">Cancel</a>

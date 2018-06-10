@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<ServiceWeb.Models.Handler>
 @{
     ViewBag.Title = "Config";
 }
@@ -26,18 +26,8 @@
 
 <h4>Watched directories:</h4>
 <h5>Click to stop watching</h5>
-@foreach (var str in ViewBag.list)
+@foreach (var item in Model)
 {
-    <button class="btn-default">@str</button>
+    <a href="@Url.Action("Delete", "Config", new { id= item.ID })" class="btn btn-default" role="button">@item.Path</a>
     <br />
 }
-
-<script src="~/Scripts/jquery-1.10.2.js"></script>
-<script>
-    $(".btn-default").click(function () {
-        localStorage.setItem("selectHand", $(this).text());
-        window.location.href = '/Config/DeleteHandler';
-        return false;
-
-    });
-</script>

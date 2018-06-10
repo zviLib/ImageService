@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Drawing;
 
 namespace ServiceWeb.Models
 {
     public class Photo
     {
         [Required]
-        [Display(Name = "FullPath")]
-        public string Path { get; set; }
+        [Display(Name = "ID")]
+        public int ID { get; set; }
         [Required]
         [Display(Name = "PicPath")]
         public string PicPath { get; set; }
