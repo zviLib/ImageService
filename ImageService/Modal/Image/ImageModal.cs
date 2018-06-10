@@ -25,7 +25,7 @@ namespace ImageService.Modal
         {
             // get picture name
             string name = path.Substring(path.LastIndexOf("\\"));
-
+            name = name.Replace(' ', '_');
             //path builders
             StringBuilder picPath = new StringBuilder(m_OutputFolder);
             StringBuilder thumbPath = new StringBuilder(m_OutputFolder + "\\thumbnail");

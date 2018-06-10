@@ -72,7 +72,6 @@ namespace ServiceWeb.Models
             if (reader.ReadInt32() == 0)
                 return false;
 
-            Writer.WriteLine("got status");
 
             return true;
 
@@ -128,14 +127,10 @@ namespace ServiceWeb.Models
             //if (!TryConnection())
             //    return null ;
 
-            Writer.WriteLine("Reading int");
             //read command enum
-            int i = reader.ReadInt32();
-            Writer.WriteLine("int = "+i);
+            reader.ReadInt32();
             //read path
-            Writer.WriteLine("Reading string");
             string s = reader.ReadString();
-            Writer.WriteLine("string = " + s);
 
             return new DirectoryCloseEventArgs
             {

@@ -10,7 +10,6 @@ namespace ServiceWeb.Controllers
         private static List<Photo> photos;
         private static int ID = 1;
 
-        // GET: Photos
         public ActionResult Index()
         {
             photos = new List<Photo>();
@@ -24,6 +23,11 @@ namespace ServiceWeb.Controllers
             return View(photos);
         }
 
+        /// <summary>
+        /// Delete confirmation screen
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Delete(int id)
         {
             if (photos == null)
@@ -51,11 +55,16 @@ namespace ServiceWeb.Controllers
             return View();
         }
 
+        /// <summary>
+        /// delete photo by id
+        /// </summary>
+        /// <param name="id">id of the photo</param>
+        /// <returns></returns>
         public ActionResult DeletePhoto(int id)
         {
             if (photos == null)
                 return RedirectToAction("Index");
-
+            
             foreach (Photo p in photos)
             {
                 string serverpath = Server.MapPath("..\\..");
@@ -71,6 +80,11 @@ namespace ServiceWeb.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// displays full picture selected
+        /// </summary>
+        /// <param name="id">selected picture</param>
+        /// <returns></returns>
         public ActionResult View(int id)
         {
             if (photos == null)
@@ -98,6 +112,10 @@ namespace ServiceWeb.Controllers
             return View();
         }
 
+        /// <summary>
+        /// find all photos in folder and subfolders
+        /// </summary>
+        /// <param name="path">folder path</param>
         private void ScanFolder(string path)
         {
             //scan all files
@@ -114,6 +132,11 @@ namespace ServiceWeb.Controllers
             }
         }
 
+        /// <summary>
+        /// creates Photo object out of it's path
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         private Photo ParsePath(string path)
         {
             string[] split = path.Split('\\');

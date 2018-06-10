@@ -18,6 +18,10 @@ namespace ServiceWeb.Controllers
             return View(logs);
         }
 
+        /// <summary>
+        /// displays screen which uses the filtered list
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Filtered()
         {
             if (filterLogs == null)
@@ -26,6 +30,10 @@ namespace ServiceWeb.Controllers
             return View(filterLogs);
         }
 
+        /// <summary>
+        /// filter logs by input
+        /// </summary>
+        /// <param name="input"></param>
         [HttpPost]
         public void Filter(string input)
         {
@@ -41,7 +49,7 @@ namespace ServiceWeb.Controllers
 
             foreach (Log log in logs)
             {
-                if (log.Type.ToString().Equals(input))
+                if (log.Type.ToString().ToLower().Contains(input.ToLower()))
                     filterLogs.Add(log);
             }
 

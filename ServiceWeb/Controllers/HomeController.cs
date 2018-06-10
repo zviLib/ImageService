@@ -1,12 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
-using ServiceWeb.Models;
+﻿using ServiceWeb.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Web.Mvc;
-using SharedInfo.Commands;
-using SharedInfo.Messages;
-using System.Threading.Tasks;
 
 namespace ServiceWeb.Controllers
 {
@@ -59,6 +55,11 @@ namespace ServiceWeb.Controllers
             return View(students);
         }
 
+        /// <summary>
+        /// counts the number of photos in service
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         private int CountPhotos(string path)
         {
             

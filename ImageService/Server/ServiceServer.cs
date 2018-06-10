@@ -80,13 +80,6 @@ namespace ImageService.Server
                 //read command enum
                 type = handler.ReadCommand();
 
-
-                ilogging.Log(new MessageRecievedEventArgs
-                {
-                    Status = MessageTypeEnum.INFO,
-                    Message = "Received Command: " + type.ToString()
-                });
-
                 bool res = false;
                 if (type == CommandEnum.TrackLogs)
                 {

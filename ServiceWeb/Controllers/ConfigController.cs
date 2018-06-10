@@ -60,6 +60,11 @@ namespace ServiceWeb.Controllers
             return View(handlers);
         }
 
+        /// <summary>
+        /// displays delete confirmation screen
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Delete(int id)
         {
             if (handlers == null)
@@ -78,6 +83,11 @@ namespace ServiceWeb.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// removes selected handler
+        /// </summary>
+        /// <param name="id">handler id</param>
+        /// <returns></returns>
         public ActionResult RemoveHandler(int id)
         {
             if (handlers == null)
@@ -96,14 +106,12 @@ namespace ServiceWeb.Controllers
             if (res == null)
                 return RedirectToAction("Index");
 
-            Writer.WriteLine("Sending command:" + res.Path);
             WebClient.SendCommand(new CommandRecievedEventArgs
             {
                 Type = CommandEnum.CloseCommand,
                 Args = new string[] { res.Path }
             });
 
-            Writer.WriteLine("Sent command:" + res.Path);
             DirectoryCloseEventArgs args = WebClient.ReadCloseCommand();
 
             res = null;
