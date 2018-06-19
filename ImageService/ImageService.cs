@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.ServiceProcess;
 using System.Runtime.InteropServices;
@@ -66,8 +66,20 @@ namespace ImageService
                 Message = "Starting Server."
             });
 
+            string[] paths = ConfigurationManager.AppSettings["Handler"].Split(';');
+
+            if (paths.Length == 0)
+            {
+                logger.Log(new MessageRecievedEventArgs
+                {
+                    Status = MessageTypeEnum.FAIL,
+                    Message = "Must listen to at least one folder."
+                });
+                OnStop();
+            }
+
             //create gui server and listen for connections
-            serviceServer = new ServiceServer(server, archive, logger);
+            serviceServer = new ServiceServer(server, archive, logger,paths[0]);
             Task t = new Task(() => serviceServer.Listen());
             t.Start();
             logger.Log(new MessageRecievedEventArgs
@@ -77,7 +89,6 @@ namespace ImageService
             });
 
             ///start listening to folders
-            string[] paths = ConfigurationManager.AppSettings["Handler"].Split(';');
             foreach (string s in paths)
                 server.WatchDirectory(s);
 
