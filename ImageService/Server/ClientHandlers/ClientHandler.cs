@@ -1,4 +1,4 @@
-﻿using SharedInfo.Commands;
+using SharedInfo.Commands;
 using SharedInfo.Messages;
 using System;
 using System.IO;
@@ -63,6 +63,16 @@ namespace ImageService.Server.ClientHandlers
         public string ReadString()
         {
             return reader.ReadString();
+        }
+
+        public byte[] ReadByteArr(int size)
+        {
+            return reader.ReadBytes(size);
+        }
+
+        public int ReadInt()
+        {
+            return reader.ReadInt32();
         }
 
         public void Close(object sender, DirectoryCloseEventArgs args)
