@@ -1,14 +1,12 @@
-﻿using ImageService.Commands;
+using ImageService.Commands;
 using ImageService.Server.ClientHandlers;
 using SharedInfo.Messages;
 using SharedInfo.Commands;
 using SharedInfo;
 using System;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using System.Threading;
 using ImageService.Modal;
 
 namespace ImageService.Server
@@ -20,14 +18,16 @@ namespace ImageService.Server
         private LogArchive m_archive;
         private TcpListener listener;
         private ILoggingModal ilogging;
+        private string newFilePath;
         public static event EventHandler<DirectoryCloseEventArgs> ServerClosed; //notifes client hanlder that the server is closing
 
-        public ServiceServer(ImageServer server, LogArchive archive, ILoggingModal logging)
+        public ServiceServer(ImageServer server, LogArchive archive, ILoggingModal logging, string newFilePath)
         {
             Alive = true;
             m_server = server;
             m_archive = archive;
             ilogging = logging;
+            this.newFilePath = newFilePath;
         }
 
         /// <summary>
@@ -45,6 +45,7 @@ namespace ImageService.Server
                 try
                 {
                     TcpClient client = listener.AcceptTcpClient();
+                    
                     // handle in different thread
                     Task t = new Task(() => HandleClient(client));
                     t.Start();
@@ -111,6 +112,10 @@ namespace ImageService.Server
                 else if (type == CommandEnum.GetLogHistory)
                 {
                     new GetLogsHistoryCommand(handler, m_archive, ilogging).Execute(new String[] { "" }, out res);
+                } else if (type == CommandEnum.NewFileCommand)
+                {
+                    new NewFileBroadcastCommand(handler,newFilePath).Execute(null, out res);
+                    break;
                 }
             }
 
